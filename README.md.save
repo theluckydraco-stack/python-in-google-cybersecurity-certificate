@@ -1,0 +1,10 @@
+# Python in Google Cybersecurity Professional Certificate
+
+This repository contains my Python practice and scripts
+while completing the Google Cybersecurity Professional Certificate.
+
+## Files
+- practice.py : return statements, conditions, basic logic
+
+## Run
+python3 practice.py
