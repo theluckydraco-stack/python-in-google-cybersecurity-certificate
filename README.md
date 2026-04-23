@@ -1,38 +1,69 @@
-# Python in Google Cybersecurity Professional Certificate
+# Python Cybersecurity Practice
 
-This repository contains structured Python practice completed alongside the Google Cybersecurity Professional Certificate.
-The exercises progressively apply core Python concepts to security-focused scenarios such as login monitoring and log analysis.
+Learning Python through the Google Cybersecurity Professional Certificate. Contains practice scripts and a working healthcare IP access control tool.
 
-## Purpose
-This repository is used to:
-- Strengthen core Python fundamentals
-- Build modular functions using return statements and conditionals
-- Practice structured problem-solving
-- Apply basic automation logic to security-focused scenarios
+## What's Here
 
-## Concepts Covered So Far
+- **`concepts_learned/`** — Python fundamentals (strings, functions, regex, file handling)
+- **`projects/healthcare_access_list_manager/`** — Working tool to manage IP allow/block lists
 
-1. Failure rate calculations using functions and return statements  
-2. Reading rate analysis with conditional logic  
-3. Login behavior analysis and ratio comparison  
-4. String operations (type casting, slicing, indexing, `.index()`)  
-5. List synchronization (users + devices), membership validation, and access control logic  
-6. Regular expressions (regex) for device pattern matching, IP extraction, and basic log scanning  
+## Quick Start
 
-## Current Script
+### Healthcare Access List Manager
 
-- practice.py — contains all structured learning sections (1–6) in progressive order
+Adds/removes IPs from an allow list and logs all changes.
 
-## How to Run
-python3 practice.py
+**Setup:**
+```bash
+cd projects/healthcare_access_list_manager/data
+# Create these files with IPs (one per line):
+# - allow_list.txt (current allowed IPs)
+# - remove_list.txt (IPs to remove)
+# - add_list.txt (new IPs to add)
+```
 
-## Goal
+**Run:**
+```bash
+cd projects/healthcare_access_list_manager
+python hACL.py
+```
 
-The long-term goal is to transition from basic scripting to building small security-focused tools such as:
+**Output:**
+- Updates `allow_list.txt` with changes
+- Logs all changes to `audit_log.txt` with timestamps
 
-- Login anomaly detectors  
-- Log parsers  
-- IP filtering utilities  
-- SOC-style mini analyzers  
+### Learning Scripts
 
-This repository documents that progression in a structured and incremental way.
+```bash
+python concepts_learned/practice.py
+```
+
+Covers: functions, conditionals, strings, lists, regex, file I/O.
+
+## Known Limitations
+
+- IP validation is basic (A.B.C.D format only, no CIDR notation)
+- No HTTPS or authentication (local tool only)
+- Audit log appends without rotation (could get large)
+- Duplicates silently removed (not reported in final log)
+
+*Plan to add: file backup before overwrite, empty/corrupt file handling, centralized audit logging, log-based intrusion detection, CSV employee-IP correlation, hashing for file integrity, CLI argument support (argparse), structured test scenarios*
+
+## File Format
+
+All IP files are plain text, one IP per line:
+```
+192.168.1.1
+10.0.0.5
+172.16.0.1
+```
+
+## Requirements
+
+Python 3.12+
+
+No external dependencies (uses standard library only).
+
+## License
+
+MIT

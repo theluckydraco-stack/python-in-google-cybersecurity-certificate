@@ -1,0 +1,13 @@
+Restricted Subnet Policy - Patient Records Environment
+
+Subnet Name: PR-SEGMENT-01
+Approved Range: 10.52.14.0/24 - 10.52.19.0/24
+Extended Temporary Range: 10.52.20.0/24
+
+Rules:
+1. Only approved employee workstations may appear in the allow list.
+2. Contractor access must expire immediately after engagement end date.
+3. Suspended or revoked users must be removed from the allow list during the next review cycle.
+4. Duplicate IP addresses should not be retained in the final allow list.
+5. Invalid IP entries must be reported and excluded.
+6. All changes must be auditable.

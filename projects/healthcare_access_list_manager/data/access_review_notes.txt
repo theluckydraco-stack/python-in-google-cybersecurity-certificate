@@ -1,0 +1,21 @@
+Healthcare Restricted Subnet - Weekly Access Review
+Review period: 2026-03-01 to 2026-03-07
+
+Summary:
+- Contractor and suspended accounts must not retain access to the patient records subnet.
+- Several employees changed teams and no longer require access to restricted records.
+- New approvals were issued for selected compliance, research, and platform staff.
+- Duplicate revoke requests were submitted for one address already listed twice.
+- At least one malformed IP was found in the submitted review package and should be skipped.
+
+Policy:
+- Any IP address on the remove list must be removed from the allow list.
+- Any IP address on the add list may be added only if it is valid and not already present.
+- Invalid IP entries must not be written to the allow list.
+- Every update must be recorded in the audit log with a timestamp.
+- The review process should produce a summary showing:
+  - original allow-list count
+  - number of removed IPs
+  - number of added IPs
+  - number of skipped duplicates
+  - number of invalid entries

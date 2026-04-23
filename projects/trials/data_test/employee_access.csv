@@ -1,0 +1,51 @@
+employee_id,username,department,role,assigned_ip,access_status,last_review_date
+HC1001,tshah,Clinical Records,Records Specialist,10.52.14.11,active,2026-03-01
+HC1002,dtanaka,Pharmacy,Pharmacy Analyst,10.52.14.12,active,2026-03-01
+HC1003,tmitchel,Lab Systems,Lab Technician,10.52.14.13,revoked,2026-03-01
+HC1004,daquino,Radiology,Radiology Coordinator,10.52.14.14,active,2026-03-01
+HC1005,eraab,Oncology,Case Manager,10.52.14.15,active,2026-03-01
+HC1006,jlansky,Billing,Billing Specialist,10.52.14.16,active,2026-03-01
+HC1007,acook,Clinical Records,Records Clerk,10.52.14.17,active,2026-03-01
+HC1008,asundara,Compliance,Compliance Analyst,10.52.14.19,revoked,2026-03-01
+HC1009,jclark,Pharmacy,Pharmacy Technician,10.52.14.20,active,2026-03-01
+HC1010,cjackson,Emergency Ops,Operations Analyst,10.52.14.21,active,2026-03-01
+HC1011,apatel,Radiology,Imaging Assistant,10.52.15.31,active,2026-03-01
+HC1012,mabadi,Lab Systems,LIS Operator,10.52.15.32,active,2026-03-01
+HC1013,iuduike,Clinical Records,Records Specialist,10.52.15.34,revoked,2026-03-01
+HC1014,abellmas,Finance,Finance Officer,10.52.15.35,active,2026-03-01
+HC1015,gesparza,Oncology,Oncology Admin,10.52.15.36,active,2026-03-01
+HC1016,cgriffin,Emergency Ops,Shift Supervisor,10.52.15.37,active,2026-03-01
+HC1017,alevitsk,Compliance,Compliance Coordinator,10.52.15.38,active,2026-03-01
+HC1018,jsoto,Pharmacy,Pharmacy Analyst,10.52.15.39,revoked,2026-03-01
+HC1019,jrafael,Contractor,Vendor Support,10.52.15.40,suspended,2026-03-01
+HC1020,yappiah,Clinical Records,Records Auditor,10.52.15.41,active,2026-03-01
+HC1021,smartell,Cardiology,Cardiology Admin,10.52.16.51,active,2026-03-01
+HC1022,arutley,Lab Systems,Lab Support,10.52.16.52,active,2026-03-01
+HC1023,rjensen,Emergency Ops,Response Coordinator,10.52.16.53,active,2026-03-01
+HC1024,aestrada,Radiology,Radiology Tech,10.52.16.54,revoked,2026-03-01
+HC1025,dkot,Network Support,Infrastructure Analyst,10.52.16.55,active,2026-03-01
+HC1026,abernard,Finance,Finance Associate,10.52.16.56,active,2026-03-01
+HC1027,bmoreno,Clinical Records,Records Specialist,10.52.16.57,active,2026-03-01
+HC1028,elarson,Clinical Records,Records Specialist,10.52.16.58,active,2026-03-01
+HC1029,sgilmore,Compliance,Compliance Reviewer,10.52.16.59,active,2026-03-01
+HC1030,eraab2,Contractor,Contract Nurse,10.52.16.61,revoked,2026-03-01
+HC1031,kazeem,Security Ops,Security Analyst,10.52.17.71,active,2026-03-01
+HC1032,segun,Security Ops,Security Analyst,10.52.17.72,active,2026-03-01
+HC1033,john,Network Support,Support Engineer,10.52.17.73,revoked,2026-03-01
+HC1034,mary,Clinical Records,Records Clerk,10.52.17.74,active,2026-03-01
+HC1035,clancy,Platform Ops,Systems Engineer,10.52.17.75,active,2026-03-01
+HC1036,matt,Platform Ops,Automation Engineer,10.52.17.76,active,2026-03-01
+HC1037,wuraola,Research,Research Assistant,10.52.17.77,active,2026-03-01
+HC1038,hananiah,Security Ops,Security Analyst,10.52.17.80,revoked,2026-03-01
+HC1039,oluwasegun,Security Ops,Security Analyst,10.52.17.81,active,2026-03-01
+HC1040,kuroro,Contractor,Temporary Consultant,10.52.17.87,suspended,2026-03-01
+HC1041,adetola,Clinical Records,Records Specialist,10.52.18.91,active,2026-03-01
+HC1042,ibukun,Radiology,Radiology Tech,10.52.18.92,active,2026-03-01
+HC1043,daniel,Pharmacy,Dispensing Officer,10.52.18.93,active,2026-03-01
+HC1044,tobi,Clinical Records,Records Clerk,10.52.18.94,revoked,2026-03-01
+HC1045,grace,Compliance,Compliance Analyst,10.52.18.95,active,2026-03-01
+HC1046,esther,Lab Systems,LIS Assistant,10.52.18.96,active,2026-03-01
+HC1047,ifeoma,Oncology,Oncology Scheduler,10.52.18.97,active,2026-03-01
+HC1048,paul,Emergency Ops,Operations Analyst,10.52.18.98,active,2026-03-01
+HC1049,samuel,Network Support,Network Technician,10.52.18.99,revoked,2026-03-01
+HC1050,mercy,Research,Research Coordinator,10.52.18.100,active,2026-03-01
