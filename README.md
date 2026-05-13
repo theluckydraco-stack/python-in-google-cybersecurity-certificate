@@ -1,17 +1,47 @@
 # Python Cybersecurity Practice
 
-Learning Python through the Google Cybersecurity Professional Certificate. Contains practice scripts and a working healthcare IP access control tool.
+Learning Python through cybersecurity-focused practice scripts and a completed healthcare IP access-list management project.
 
 ## What's Here
 
 - **`concepts_learned/`** — Python fundamentals (strings, functions, regex, file handling)
-- **`projects/healthcare_access_list_manager/`** — Working tool to manage IP allow/block lists
+- **`projects/healthcare_access_list_manager/`** — Finished hACL v1 access-list manager with tests
+
+## Main Project: hACL
+
+The main completed project in this repository is **hACL**, located at:
+
+```text
+projects/healthcare_access_list_manager/
+```
+
+hACL stands for **Healthcare Access List Manager**. It is a local Python tool for maintaining a healthcare access allow list. It reads approved input files, validates IPv4 addresses, removes duplicate entries, applies approved additions/removals, rewrites the allow list when needed, and records a timestamped audit log.
+
+The main script is:
+
+```text
+projects/healthcare_access_list_manager/hACL.py
+```
+
+The test suite is:
+
+```text
+projects/healthcare_access_list_manager/tests/
+```
+
+Older practice scripts, such as files under `concepts_learned/` and `projects/trials/`, are learning material.
 
 ## Quick Start
 
 ### Healthcare Access List Manager
 
-Adds/removes IPs from an allow list and logs all changes.
+hACL validates IPs, removes duplicates, applies approved additions/removals, and writes an audit log with removed IPs, added IPs, invalid IPs, and duplicate count.
+
+Project location:
+
+```text
+projects/healthcare_access_list_manager/
+```
 
 **Setup:**
 ```bash
@@ -25,12 +55,17 @@ cd projects/healthcare_access_list_manager/data
 **Run:**
 ```bash
 cd projects/healthcare_access_list_manager
-python hACL.py
+python3 hACL.py
 ```
 
 **Output:**
 - Updates `allow_list.txt` with changes
-- Logs all changes to `audit_log.txt` with timestamps
+- Logs meaningful runs to `audit_log.txt` with timestamps and duplicate count
+
+**Tests:**
+```bash
+python3 -m pytest projects/healthcare_access_list_manager/tests -v
+```
 
 ### Learning Scripts
 
@@ -45,9 +80,9 @@ Covers: functions, conditionals, strings, lists, regex, file I/O.
 - IP validation is basic (A.B.C.D format only, no CIDR notation)
 - No HTTPS or authentication (local tool only)
 - Audit log appends without rotation (could get large)
-- Duplicates silently removed (not reported in final log)
+- hACL is not a detection system; it does not parse authentication logs, detect password spraying, correlate employee access, or emit structured alerts
 
-*Plan to add: file backup before overwrite, empty/corrupt file handling, centralized audit logging, log-based intrusion detection, CSV employee-IP correlation, hashing for file integrity, CLI argument support (argparse), structured test scenarios*
+Future detection and correlation work belongs in the next project: **hACL-ITDR Detector**. That project will extend hACL with password-spray detection, employee access correlation, allow-list integrity monitoring, structured JSON alerts, and MITRE ATT&CK mapping.
 
 ## File Format
 
@@ -62,7 +97,7 @@ All IP files are plain text, one IP per line:
 
 Python 3.12+
 
-No external dependencies (uses standard library only).
+hACL itself uses the standard library. Running the test suite requires `pytest`.
 
 ## License
 

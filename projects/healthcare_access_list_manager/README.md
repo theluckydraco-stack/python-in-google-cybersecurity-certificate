@@ -2,32 +2,18 @@
 
 ## Purpose
 
-Manages IP allow lists for healthcare access systems. Supports adding/removing IPs, validates input, detects duplicates, and maintains an audit log of all changes for compliance and security.
+hACL manages a healthcare access allow list by validating IPs, removing duplicates, applying approved additions and removals, and recording changes in an audit log.
+
+This project is an access-list management tool. It is not a HIDS, password-spray detector, or broader detection system.
 
 ## Features
 
-- ✅ **IP Validation** — Validates IPs in A.B.C.D format where A-D are 0-255
-- ✅ **Duplicate Detection** — Removes duplicate IPs from input lists
-- ✅ **Batch Operations** — Add/remove multiple IPs in one operation
-- ✅ **Audit Logging** — Timestamped log of all changes for compliance
-- ✅ **Security-Focused** — Does not log sensitive allowlist contents
-
-## Usage
-
-### Basic Usage
-
-```python
-from hACL import update_allow_list
-
-update_allow_list("allow_list.txt", "remove_list.txt", "add_list.txt")
-```
-
-### From Command Line
-
-```bash
-cd projects/healthcare_access_list_manager
-python hACL.py
-```
+- IP validation for IPv4-style addresses where each octet is 0-255
+- Duplicate removal without exposing duplicate values in console output or logs
+- Batch removals from `remove_list.txt`
+- Batch additions from `add_list.txt`
+- Audit logging for removed IPs, added IPs, invalid IPs, and duplicate count
+- Auto-creation of `audit_log.txt` when the script runs
 
 ## Data Files
 
@@ -35,128 +21,96 @@ Place these files in the `data/` directory:
 
 | File | Purpose |
 |------|---------|
-| `allow_list.txt` | Current allowed IPs (one per line) |
-| `remove_list.txt` | IPs to revoke/remove (one per line) |
-| `add_list.txt` | New IPs to add (one per line) |
-| `audit_log.txt` | Timestamped log of changes (auto-created) |
+| `allow_list.txt` | Current approved IPs, one per line |
+| `remove_list.txt` | IPs approved for revocation, one per line |
+| `add_list.txt` | IPs approved for addition, one per line |
+| `audit_log.txt` | Timestamped audit history, auto-created if missing |
 
-## File Format
+The required input files are `allow_list.txt`, `remove_list.txt`, and `add_list.txt`. The audit log is created automatically.
 
-Each IP file contains one IP address per line:
+## Usage
+
+Run the script from the project directory:
+
+```bash
+cd projects/healthcare_access_list_manager
+python3 hACL.py
 ```
-192.168.1.1
-10.0.0.1
-172.16.0.1
+
+Import the workflow from another Python file:
+
+```python
+from hACL import update_allow_list
+
+update_allow_list("data/allow_list.txt", "data/remove_list.txt", "data/add_list.txt")
 ```
+
+Importing `hACL.py` does not run the update workflow. The file check and update only run when `hACL.py` is executed directly.
 
 ## How It Works
 
-1. **Read** all input files
-2. **Validate** IPs in each list (removes invalid entries)
-3. **Deduplicate** removes duplicate IPs
-4. **Process Removals** — IPs in remove_list are deleted from allow_list
-5. **Process Additions** — New valid IPs are added to allow_list
-6. **Log Changes** — Timestamps and changes written to audit_log.txt
-7. **Write** updated allow_list back to file
+1. Reads the allow, remove, and add files.
+2. Validates each list and separates valid IPs from invalid IPs.
+3. Removes duplicate IPs and counts how many were removed.
+4. Removes approved revoked IPs from the allow list.
+5. Adds approved new IPs that are not already allowed.
+6. Rewrites `allow_list.txt` when additions, removals, or allow-list cleanup changed it.
+7. Writes one audit entry for each meaningful run.
 
 ## Audit Log Format
 
-```
-2026-04-21 14:30:45 | Removed IPs: 192.168.1.5,10.0.0.2 | Added IPs: 172.16.1.1 | Invalid IPs: 
-```
-
-- **Removed IPs**: Successfully deleted from allow list
-- **Added IPs**: Successfully added to allow list
-- **Invalid IPs**: Rejected entries (malformed or out of range)
-
-## Testing
-
-```bash
-# Run all tests
-pytest tests/test_healthcare_acl.py -v
-
-# Run specific test
-pytest tests/test_healthcare_acl.py::TestValidateIPList -v
+```text
+2026-05-12 14:30:45 | Removed IPs: 192.168.1.5 | Added IPs: 172.16.1.1 | Invalid IPs: bad-ip | Duplicate Count: 2
 ```
 
-## Security Notes
+- `Removed IPs`: IPs successfully removed from the allow list.
+- `Added IPs`: New IPs successfully added to the allow list.
+- `Invalid IPs`: Rejected malformed or out-of-range entries.
+- `Duplicate Count`: Number of duplicate entries removed across the input lists.
 
-- ✅ Does not log IPs that already exist in allowlist (prevents exposure)
-- ✅ Does not log duplicate IPs from inputs
-- ✅ Invalid IPs are logged (these are user errors, not sensitive)
-- ✅ All changes timestamped for compliance
+## Security Decisions
 
-## Example Workflow
-
-**Step 1:** Create input files in `data/`
-```
-# data/remove_list.txt
-192.168.1.5
-10.0.0.2
-
-# data/add_list.txt
-172.16.1.1
-192.168.100.50
-```
-
-**Step 2:** Run the script
-```bash
-python hACL.py
-```
-
-**Step 3:** Check results
-```bash
-cat data/allow_list.txt     # Updated allowlist
-cat data/audit_log.txt      # Change log
-```
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| "File not found" error | Check all required files exist in `data/` |
-| No changes logged | Verify IPs are valid format (A.B.C.D) |
-| Unexpected results | Check for duplicates in input files |
+- Existing allow-list IPs from `add_list.txt` are skipped without logging their values.
+- Duplicate values are counted but not logged individually.
+- Invalid IPs are logged because they are rejected input values.
+- The script records one clear audit entry per meaningful run instead of logging from helper functions.
 
 ## Function Reference
 
-### `validate_ip_list(ip_list, audit_log_path)`
-Validates IPs and logs invalid ones. Returns list of valid IPs only.
+### `validate_ip_list(ip_list)`
+
+Returns `valid_ips, invalid_ips`.
 
 ### `remove_duplicate(ip_list)`
-Removes duplicate IPs from a list. Returns deduplicated list.
+
+Returns `unique_ips, duplicate_count`.
+
+### `append_audit_log(file_path, removed_ips, added_ips, invalid_ips, duplicate_count=0)`
+
+Appends one timestamped audit entry, including duplicate count.
 
 ### `update_allow_list(allow_file, remove_file, add_file=None)`
-Main function. Processes all operations and updates files.
 
-### `append_audit_log(file_path, removed_ips, added_ips, invalid_ips)`
-Logs changes with timestamp to audit log.
+Runs the full access-list workflow: read files, validate IPs, remove duplicates, apply removals and additions, write the allow list when needed, and append the audit log when there is something to record.
 
-## Future Improvements
+## Testing
 
-- Implement file backup before overwriting (prevent data loss)
-- Improve file validation to handle empty and corrupted files
-- Refactor validation logic to remove logging side effects
-- Centralize audit logging for consistency and clarity
-- Improve function design to enforce single responsibility
+Run the hACL test suite:
 
-### Detection & Analysis
-- Add log parsing for failed login attempts
-- Implement detection logic for suspicious IP behavior (e.g., repeated failures)
-- Integrate detection results with allow list for risk flagging
+```bash
+pytest projects/healthcare_access_list_manager/tests -v
+```
 
-### Security Enhancements
-- Add file integrity checks using hashing (SHA-256)
-- Detect unauthorized modifications to critical files
+If `pytest` is not on PATH, use:
 
-### Data Correlation
-- Integrate employee_access.csv
-- Map IP addresses to authorized users
-- Flag IPs not associated with valid employees
+```bash
+python3 -m pytest projects/healthcare_access_list_manager/tests -v
+```
 
-### Usability
-- Add command-line arguments using argparse (e.g., --remove-only)
-- Improve script flexibility without modifying code
+## Limitations
 
-### Testing
-- Expand structured testing scenarios for edge cases and failure conditions
+hACL v1 does not parse authentication logs, detect password spraying, correlate employee access, monitor allow-list integrity, produce MITRE ATT&CK mappings, write Sigma/KQL rules, or emit structured JSON alerts.
+
+## Next Project: hACL-ITDR Detector
+
+hACL is the access governance foundation for a follow-up project: hACL-ITDR Detector. The next project extends this access-list manager with password-spray detection, employee access correlation, allow-list integrity monitoring, structured JSON alerts, and MITRE ATT&CK T1110.003 mapping.
