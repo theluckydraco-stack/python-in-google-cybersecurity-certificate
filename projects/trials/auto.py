@@ -13,24 +13,20 @@ ALLOW_LIST_PATH = DATA_DIR / "allow_list.txt"
 REMOVE_LIST_PATH = DATA_DIR / "remove_list.txt"
 ADD_LIST_PATH = DATA_DIR / "add_list.txt"
 AUDIT_LOG_PATH = DATA_DIR / "audit_log.txt"
-ACCESS_REVIEW_NOTES_PATH = DATA_DIR / "access_review_notes.txt"
-EMPLOYEE_ACCESS_PATH = DATA_DIR / "employee_access.csv"
-SUBNET_POLICY_PATH = DATA_DIR / "subnet_policy.txt"
+
 
 # to know to check if files are present before running script
 
-required_files = [ALLOW_LIST_PATH, REMOVE_LIST_PATH, ADD_LIST_PATH, AUDIT_LOG_PATH]
-all_files_present = True
-for file in required_files:
-    if file.exists():
-        print(f"Filename: {file.name} found")
-    else:
-        print(f"ERROR: Filename: {file.name} is missing.")
-        all_files_present = False
+def check_required_files(required_files):
     
-if not all_files_present:
-    print("One or more file missing. Exiting...")
-    exit()
+    all_files_present = True
+    for file in required_files:
+        if file.exists():
+            print(f"Filename: {file.name} found")
+        else:
+            print(f"ERROR: Filename: {file.name} is missing.")
+            all_files_present = False
+    return all_files_present
 
     
 # (1) Defining functions needed on files:
@@ -75,17 +71,21 @@ The entry includes details of the changes made to the access list,
 such as which IPs were removed, added, skipped (due to being duplicates), and absent (expected but not found).
 This helps maintain a record of all modifications for auditing purposes.
 """
-def append_audit_log(file_path, removed_ips, added_ips, invalid_ips):
+def append_audit_log(file_path, removed_ips, added_ips, invalid_ips, duplicate_count=0):
 
 
     removed_text = ",".join(removed_ips)
     added_text = ",".join(added_ips)
-    invalid_text = ",".join(invalid_ips) #skipped due to being invalid
-
+    invalid_text = ",".join(invalid_ips) 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") #to get current timestamp in a readable format
 
+    log_entry = (f"{timestamp} | Removed IPs: {removed_text} | "
+                 f"Added IPs: {added_text} | Invalid IPs: {invalid_text} | "
+                 f"Duplicate Count: {duplicate_count}\n"
+    )
+
     with open(file_path, "a") as file:
-        file.write(f"{timestamp} | Removed IPs: {removed_text} | Added IPs: {added_text} | Invalid IPs: {invalid_text}\n")
+        file.write(log_entry)
 
 # (d) a function to validate IP addresses in a list and separate valid and invalid ones
 """This function takes a list of IP addresses as input
@@ -95,7 +95,7 @@ If an IP address is valid, it is added to the valid_ips list;
 if it is invalid, it is added to the invalid_ips list.
 The function returns both lists for further processing.
 """
-def validate_ip_list(ip_list, audit_log_path):
+def validate_ip_list(ip_list):
     valid_ips = []
     invalid_ips = []
     for ip in ip_list:
@@ -112,13 +112,9 @@ def validate_ip_list(ip_list, audit_log_path):
             valid_ips.append(ip)
         else:
             invalid_ips.append(ip)
-    #logging invalid_ips as skipped_ips
-    append_audit_log(audit_log_path, [], [], invalid_ips)
-    print("List validated. Invalid IPs have been skipped and logged")
-    ip_list[:] = valid_ips
-    return ip_list
+    return valid_ips, invalid_ips
         
-        
+
 # (e) a function to detect and remove duplicate ips
 """This function iterates through the list of IP addresses and uses a set to track seen IPs.
 If an IP is encountered that has already been seen,
@@ -127,70 +123,88 @@ A message is printed for each duplicate detected and removed.
 """
 def remove_duplicate(ip_list):
     unique_ips = []
+    duplicate_count = 0
     seen = set()
     for ip in ip_list:
         if ip not in seen:
             unique_ips.append(ip)
             seen.add(ip)
         else:
-            print("Duplicate IP detected and removed. Duplicates found:", len) #note: I decided not to log or print out duplicates to avoid exposing duplicate IPs from inputs.
-    ip_list[:] = unique_ips
-    return ip_list
-
-
+            duplicate_count += 1
+    if duplicate_count > 0:
+        print("Duplicate IP(s) detected and removed") #note: I decided not to log or print out duplicates to avoid exposing duplicate IPs from inputs.
+    return unique_ips, duplicate_count
 
 
 # defining a function to update the allowlist by revoking some ips, or adding some if an add list is provided, then log the changes.
 def update_allow_list(allow_file, remove_file, add_file=None):
-    allow_list = read_file(allow_file)
+    #1. Read original files   
+    original_allow_list = read_file(allow_file)
     remove_list = read_file(remove_file)
-    if add_file != None:
-        add_list = read_file(add_file)
-        
-        add_list = remove_duplicate(add_list)
-        add_list = validate_ip_list(add_list, AUDIT_LOG_PATH)
+    if add_file is not None:
+        add_list = read_file(add_file)   
     else:
         add_list = []
 
-    print("Original allow list count:", len(allow_list))
+    print("Original allow list count:", len(original_allow_list))
+    #2. validate all three lists
+    valid_allow_list, invalid_allow_ips = validate_ip_list(original_allow_list)
+    valid_remove_list, invalid_remove_ips = validate_ip_list(remove_list)
+    valid_add_list, invalid_add_ips = validate_ip_list(add_list)
 
-    allow_list = validate_ip_list(allow_list, AUDIT_LOG_PATH)
-    allow_list = remove_duplicate(allow_list)
+    #3. remove duplicates and count them
+    clean_allow_list, allow_duplicate_count = remove_duplicate(valid_allow_list)
+    clean_remove_list, remove_duplicate_count = remove_duplicate(valid_remove_list)
+    clean_add_list, add_duplicate_count = remove_duplicate(valid_add_list)
 
-    remove_list = validate_ip_list(remove_list, AUDIT_LOG_PATH)
-    remove_list = remove_duplicate(remove_list)
 
-    updated_ips = []
+    ## We now have a clean version of all three lists: clean_allow_list, clean_remove_list, clean_add_list
+
+    # Combining audit details (invalid_ips and duplicate counts)
+    invalid_ips = invalid_allow_ips + invalid_remove_ips + invalid_add_ips
+
+    duplicate_count = (
+        allow_duplicate_count
+        + remove_duplicate_count
+        + add_duplicate_count
+    )
+
+    allow_list = clean_allow_list.copy()
     removed_ips = []
     added_ips = []
 
-    for ip in remove_list:
+    for ip in clean_remove_list:
         if ip in allow_list:
             removed_ips.append(ip)
             allow_list.remove(ip)
         else:
-            print(f"{ip} does not exist in the allowlist")
-    updated_ips = allow_list.copy()
-    for ip in add_list:
+            print(f"IP address: {ip} does not exist in the allowlist")
+    
+    for ip in clean_add_list:
         if ip not in allow_list:
-            updated_ips.append(ip)
+            allow_list.append(ip)
             added_ips.append(ip)
         else:
-            continue #note: I decided not to log or print out skipped IPs from the add list because it'd expose the content of the allow_list
-    
-    if len(removed_ips) == 0 and len(added_ips) == 0:
-        print("No changes were made, the allowlist is up to date")
-    else:
-        write_file(allow_file, updated_ips)
-        append_audit_log(AUDIT_LOG_PATH, removed_ips, added_ips, [])
+            continue 
+    allow_list_was_cleaned = clean_allow_list != original_allow_list
+    if removed_ips or added_ips or allow_list_was_cleaned:
+        write_file(allow_file, allow_list)
+    if removed_ips or added_ips or invalid_ips or duplicate_count or allow_list_was_cleaned:
+        append_audit_log(AUDIT_LOG_PATH, removed_ips, added_ips, invalid_ips, duplicate_count)
 
-        print("Updated allowlist count:", len(updated_ips))
+        print("Updated allowlist count:", len(allow_list))
         print("Blacklisted IPs found and removed:", len(removed_ips))
         print("New IPs added to the allowlist:", len(added_ips))
         print()
         print("Request completed, please review audit log for more details")
+    else:
+        print("No changes were made, the allowlist is up to date")
 
 if __name__ == "__main__":
-    update_allow_list(ALLOW_LIST_PATH, REMOVE_LIST_PATH, ADD_LIST_PATH) # this will add new IPs and remove the ones in the remove list.
+    required_files = [ALLOW_LIST_PATH, REMOVE_LIST_PATH, ADD_LIST_PATH]
 
-        
+    if not check_required_files(required_files):
+        print("One or more file missing. Exiting...")
+        exit()
+    AUDIT_LOG_PATH.touch(exist_ok=True)
+    update_allow_list(ALLOW_LIST_PATH, REMOVE_LIST_PATH, ADD_LIST_PATH)
