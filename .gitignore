@@ -8,10 +8,19 @@ __pycache__/
 dist/
 build/
 
-# Virtual Environment
+# Virtual environments
+.venv/
 venv/
 env/
 ENV/
+
+# Test and coverage output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
 
 # IDEs
 .vscode/
@@ -20,14 +29,10 @@ ENV/
 *.swo
 *~
 
-# OS
+# Operating systems
 .DS_Store
 Thumbs.db
 
-# Logs
+# Logs and runtime audit output
 *.log
-
-# Project-specific
-# Data files (optional - uncomment if you generate them)
-# data/allow_list.txt
-# data/audit_log.txt
+projects/healthcare_access_list_manager/data/audit_log.jsonl

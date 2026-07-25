@@ -1,0 +1,57 @@
+name: hACL CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/hacl-v1-hardening
+    paths:
+      - "projects/healthcare_access_list_manager/**"
+      - ".github/workflows/hacl-ci.yml"
+      - "README.md"
+  pull_request:
+    paths:
+      - "projects/healthcare_access_list_manager/**"
+      - ".github/workflows/hacl-ci.yml"
+      - "README.md"
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+
+    defaults:
+      run:
+        working-directory: projects/healthcare_access_list_manager
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: projects/healthcare_access_list_manager/pyproject.toml
+
+      - name: Install project and development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check hACL.py tests
+
+      - name: Type check
+        run: mypy hACL.py
+
+      - name: Test with coverage
+        run: python -m pytest
