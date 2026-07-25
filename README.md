@@ -19,6 +19,7 @@ A technical reviewer can assess the project through these artefacts:
 6. [Security policy](SECURITY.md)
 7. [Contribution requirements](CONTRIBUTING.md)
 8. [Merged ITDR integrity-and-timeline pull request](https://github.com/theluckydraco-stack/hacl-itdr-detector/pull/5)
+9. [Merged Windows-schema, identity-detection and reporting pull request](https://github.com/theluckydraco-stack/hacl-itdr-detector/pull/6)
 
 ## Featured project: hACL
 
@@ -102,7 +103,7 @@ python3 -m pytest
 
 hACL is an access-governance tool. It does not claim to be a HIDS or ITDR detector.
 
-The separate [hACL ITDR Detector](https://github.com/theluckydraco-stack/hacl-itdr-detector) now implements password-spray and identity correlation, trusted SHA-256 allow-list baselines, semantic integrity diffs, missing and malformed file detection, structured ATT&CK-mapped alerts, deterministic investigation timelines, Sigma/KQL drafts, and synthetic investigation evidence. It consumes similar access-governance concepts without expanding or rewriting hACL.
+The separate [hACL ITDR Detector](https://github.com/theluckydraco-stack/hacl-itdr-detector) now implements password-spray and inactive-account logon detection; representative Windows Security adapters for events 4624, 4625, 4663 and 4740; identity and privilege correlation; trusted SHA-256 allow-list baselines; semantic integrity diffs; Windows file-access evidence; versioned alerts; deterministic investigation timelines; static Sigma/KQL field-contract validation; evidence hashing; and automated Markdown investigation reports. It consumes similar access-governance concepts without expanding or rewriting hACL.
 
 ## Requirements
 
