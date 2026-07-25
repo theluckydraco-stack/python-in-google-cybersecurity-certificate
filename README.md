@@ -1,17 +1,17 @@
 # Python Security Engineering Portfolio
 
-[![hACL CI](https://github.com/theluckydraco-stack/python-in-google-cybersecurity-certificate/actions/workflows/hacl-ci.yml/badge.svg)](https://github.com/theluckydraco-stack/python-in-google-cybersecurity-certificate/actions/workflows/hacl-ci.yml)
-[![CodeQL](https://github.com/theluckydraco-stack/python-in-google-cybersecurity-certificate/actions/workflows/codeql.yml/badge.svg)](https://github.com/theluckydraco-stack/python-in-google-cybersecurity-certificate/actions/workflows/codeql.yml)
+[![hACL CI](https://github.com/theluckydraco-stack/python-security-engineering-portfolio/actions/workflows/hacl-ci.yml/badge.svg)](https://github.com/theluckydraco-stack/python-security-engineering-portfolio/actions/workflows/hacl-ci.yml)
+[![CodeQL](https://github.com/theluckydraco-stack/python-security-engineering-portfolio/actions/workflows/codeql.yml/badge.svg)](https://github.com/theluckydraco-stack/python-security-engineering-portfolio/actions/workflows/codeql.yml)
 
 A Python security-engineering portfolio centred on reliable access-governance automation, explicit failure handling, testable security decisions, and structured audit evidence.
 
-The primary engineering project is **hACL**. Earlier certificate exercises are retained as development provenance, not presented as the main portfolio evidence.
+The primary engineering project is **hACL**. Earlier certificate exercises are retained as development provenance, not presented as the main portfolio evidence. Its detection-engineering companion is the separate [hACL ITDR Detector](https://github.com/theluckydraco-stack/hacl-itdr-detector) repository.
 
 ## Reviewer path
 
 A technical reviewer can assess the project through these artefacts:
 
-1. [Merged hACL hardening pull request](https://github.com/theluckydraco-stack/python-in-google-cybersecurity-certificate/pull/1)
+1. [Merged hACL hardening pull request](https://github.com/theluckydraco-stack/python-security-engineering-portfolio/pull/1)
 2. [`hACL.py` implementation](projects/healthcare_access_list_manager/hACL.py)
 3. [Automated test suite](projects/healthcare_access_list_manager/tests/)
 4. [Architecture and transaction model](projects/healthcare_access_list_manager/README.md)
@@ -101,7 +101,7 @@ python3 -m pytest
 
 hACL is an access-governance tool. It does not claim to be a HIDS or ITDR detector.
 
-The separate planned `hacl-itdr-detector` project will add password-spray detection, identity correlation, allow-list integrity monitoring, structured security alerts, MITRE ATT&CK mapping, Sigma/KQL drafts, and an investigation report.
+The separate [hACL ITDR Detector](https://github.com/theluckydraco-stack/hacl-itdr-detector) now contains the first detection milestone: password-spray detection, identity correlation, successful-logon and account-lockout correlation, structured ATT&CK-mapped alerts, Sigma/KQL drafts, and a synthetic incident report. It consumes similar access-governance concepts without expanding or rewriting hACL.
 
 ## Requirements
 
