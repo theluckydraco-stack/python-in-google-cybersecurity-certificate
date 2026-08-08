@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "threat2attack"
+version = "0.1.0"
+description = "Review-first CTI to MITRE ATT&CK and detection-draft pipeline"
+requires-python = ">=3.12"
+dependencies = ["PyYAML>=6.0.2"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "ruff>=0.9"]
+
+[project.scripts]
+threat2attack = "threat2attack.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
