@@ -1,0 +1,28 @@
+[
+  {
+    "id": "obs-001",
+    "source": "Synthetic lab report",
+    "evidence": "The actor executed PowerShell with an encoded command.",
+    "platform": "windows",
+    "behaviour": "powershell encoded command execution",
+    "detection": {
+      "logsource": "process_creation",
+      "product": "windows",
+      "field": "CommandLine",
+      "contains": ["powershell", "-enc"]
+    }
+  },
+  {
+    "id": "obs-002",
+    "source": "Synthetic lab report",
+    "evidence": "The host used curl to download a payload from remote infrastructure.",
+    "platform": "linux",
+    "behaviour": "curl download payload",
+    "detection": {
+      "logsource": "process_creation",
+      "product": "linux",
+      "field": "CommandLine",
+      "contains": ["curl", "http"]
+    }
+  }
+]
